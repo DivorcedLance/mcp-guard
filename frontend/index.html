@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP-Guard | UNMSM Security System</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --panel-bg: #1e293b;
+            --primary: #3b82f6;     /* Azul UNMSM */
+            --accent: #0ea5e9;      /* Cyan tecnológico */
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --alert: #ef4444;       /* Rojo Alerta */
+            --border: #334155;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', monospace;
+            background-color: var(--bg-color);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Layout Principal */
+        .main-container {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            border-left: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        /* Header */
+        header {
+            background-color: var(--panel-bg);
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+        }
+
+        .badge {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--accent);
+            border: 1px solid var(--primary);
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        /* Panel de Ingesta (Upload) */
+        .control-panel {
+            background-color: #111827;
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .file-upload-wrapper {
+            flex: 1;
+            display: flex;
+            gap: 10px;
+        }
+
+        input[type="file"] {
+            background: var(--bg-color);
+            color: var(--text-muted);
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+
+        .btn-upload {
+            background-color: var(--success);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            transition: opacity 0.2s;
+        }
+
+        .btn-upload:hover { opacity: 0.9; }
+        .btn-upload:disabled { background-color: var(--text-muted); cursor: wait; }
+
+        /* Área de Chat */
+        #chat-window {
+            flex: 1;
+            background-color: var(--bg-color);
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 8px;
+            line-height: 1.5;
+            font-size: 0.95rem;
+            position: relative;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background-color: var(--primary);
+            color: white;
+            border-bottom-right-radius: 0;
+        }
+
+        .message.bot {
+            align-self: flex-start;
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border);
+            border-bottom-left-radius: 0;
+        }
+
+        .message.system {
+            align-self: center;
+            background-color: transparent;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            text-align: center;
+            border: 1px dashed var(--border);
+            width: 90%;
+        }
+
+        /* Alerta de Seguridad */
+        .security-alert {
+            align-self: center;
+            background-color: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--alert);
+            color: #fca5a5;
+            text-align: center;
+            width: 90%;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        /* Input Area */
+        .input-area {
+            padding: 20px;
+            background-color: var(--panel-bg);
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 10px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background-color: var(--bg-color);
+            color: white;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        input[type="text"]:focus { border-color: var(--primary); }
+
+        .btn-send {
+            padding: 0 25px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        
+        .btn-send:hover { background-color: #2563eb; }
+
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <header>
+        <div>
+            <h1>🛡️ MCP-GUARD</h1>
+            <small style="color: var(--text-muted);">Secure RAG Architecture - UNMSM</small>
+        </div>
+        <span class="badge">SYSTEM ONLINE</span>
+    </header>
+
+    <div class="control-panel">
+        <div class="file-upload-wrapper">
+            <input type="file" id="pdfInput" accept=".pdf">
+            <button class="btn-upload" id="uploadBtn" onclick="uploadPDF()">⬆ Ingestar PDF</button>
+        </div>
+    </div>
+    
+    <div id="chat-window">
+        <div class="message bot">
+            Sistema inicializado. Base de conocimiento vectorial conectada.<br>
+            Puedes subir documentos PDF arriba o hacerme preguntas sobre los documentos ya cargados.
+        </div>
+    </div>
+
+    <div class="input-area">
+        <input type="text" id="userInput" placeholder="Escribe tu consulta segura aquí..." onkeypress="handleEnter(event)">
+        <button class="btn-send" id="sendBtn" onclick="sendMessage()">Enviar</button>
+    </div>
+</div>
+
+<script>
+    const chatWindow = document.getElementById('chat-window');
+    const userInput = document.getElementById('userInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const pdfInput = document.getElementById('pdfInput');
+
+    const API_URL = "http://localhost:8000/api/v1";
+
+    function handleEnter(e) {
+        if (e.key === 'Enter') sendMessage();
+    }
+
+    function addMessage(text, type) {
+        const div = document.createElement('div');
+        div.className = `message ${type}`;
+        div.innerHTML = text; // Permite HTML básico como <br> o <b>
+        chatWindow.appendChild(div);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    // --- FUNCIÓN PARA SUBIR PDF ---
+    async function uploadPDF() {
+        if (pdfInput.files.length === 0) {
+            alert("Por favor selecciona un archivo PDF primero.");
+            return;
+        }
+
+        const file = pdfInput.files[0];
+        const formData = new FormData();
+        formData.append("file", file);
+
+        // UI Feedback
+        uploadBtn.disabled = true;
+        uploadBtn.innerText = "Procesando...";
+        addMessage(`⏳ Iniciando ingesta y vectorización de: <b>${file.name}</b>...`, 'system');
+
+        try {
+            const response = await fetch(`${API_URL}/upload`, {
+                method: 'POST',
+                body: formData
+                // Nota: No poner 'Content-Type' header manualmente con FormData, el navegador lo hace solo.
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                addMessage(`✅ <b>Éxito:</b> Documento vectorizado correctamente. Fragmentos: ${data.details.chunks_processed}`, 'system');
+                pdfInput.value = ""; // Limpiar input
+            } else {
+                addMessage(`❌ <b>Error:</b> ${data.detail || "Error al subir archivo"}`, 'system');
+            }
+
+        } catch (error) {
+            console.error(error);
+            addMessage(`❌ <b>Error de Red:</b> No se pudo conectar al servidor.`, 'system');
+        } finally {
+            uploadBtn.disabled = false;
+            uploadBtn.innerText = "⬆ Ingestar PDF";
+        }
+    }
+
+    // --- FUNCIÓN PARA CHAT ---
+    async function sendMessage() {
+        const text = userInput.value.trim();
+        if (!text) return;
+
+        addMessage(text, 'user');
+        userInput.value = '';
+        userInput.disabled = true;
+        sendBtn.disabled = true;
+
+        try {
+            const response = await fetch(`${API_URL}/chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query: text })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                addMessage(data.response, 'bot');
+            } else {
+                // Manejo especial para errores de seguridad (MCP Guard)
+                if (response.status === 400 && data.detail && data.detail.includes("Security")) {
+                     addMessage(`⚠️ <b>ALERTA DE SEGURIDAD MCP</b><br>${data.detail}`, 'security-alert');
+                } else {
+                    addMessage(`Error: ${data.detail || "Algo salió mal"}`, 'bot');
+                }
+            }
+
+        } catch (error) {
+            console.error(error);
+            addMessage("Error de conexión con el Backend.", 'bot');
+        } finally {
+            userInput.disabled = false;
+            sendBtn.disabled = false;
+            userInput.focus();
+        }
+    }
+</script>
+
+</body>
+</html>
